@@ -8,9 +8,11 @@ var config = {
   messagingSenderId: "719972826320"
 };
 firebase.initializeApp(config);
-   
-   var database = firebase.database();
 
+  
+  var database = firebase.database();
+  var counter = 0;
+  var counter1 = 0;
    $("#submit").on("click", function(event) {
       event.preventDefault();
    
@@ -41,6 +43,7 @@ firebase.initializeApp(config);
           frequency: frequency,
           nextTrain: nextTrain,
           tAway: tAway,
+          fTrain: fTrain,
           dateAdded: firebase.database.ServerValue.TIMESTAMP
         });
         
@@ -52,18 +55,59 @@ firebase.initializeApp(config);
    
    database.ref().on("child_added", function(snapshot) {
       var newRow = $("<tr>");
+      //$(newRow).attr("id","a"+counter);
+      //counter++
       var tableName = $("<td>").text(snapshot.val().name);
       var tableDestination = $("<td>").text(snapshot.val().destination);
       var tableFrequency = $("<td>").text(snapshot.val().frequency);
       var tableNextTrain = $("<td>").text(snapshot.val().nextTrain);
+      $(tableNextTrain).attr("id","b"+counter);
       var tableMinsAway = $("<td>").text(snapshot.val().tAway);
-   
-      newRow.append(tableName).append(tableDestination).append(tableFrequency).append(tableNextTrain).append(tableMinsAway);
+      $(tableMinsAway).attr("id","a"+counter);
+      tableMinsAway.addClass("aClass");
+      var button1 = $("<button>").html("Remove");
+      var button2 = $("<button>").html("Refresh");
+      button2.attr("id", "c"+counter);
+      counter++
+      newRow.html(tableName).append(tableDestination).append(tableFrequency).append(tableNextTrain).append(tableMinsAway).append(button2).append(button1);
    
       $("#trainTable").append(newRow);
+      
+      $(button1).on("click", function(event) {
+        $(this).closest ('tr').remove ();
+        //$(this).parents('tr').first().remove();
+      });
+
+      $(button2).on("click", function(event) {
+        location.reload();
+        
+      });
+
+      
+
+      //var myVar = setInterval(myTimer, 10000);
+      //function myTimer() {
+      var ffTrain = snapshot.val().fTrain;
+      var ffrequency = snapshot.val().frequency;
+      var ffTrainC =  moment(ffTrain, "HH:mm").subtract(1, "years");
+      var ttD = moment().diff(moment(ffTrainC), "minutes");
+      var ttRemainder = ttD % ffrequency;
+      var ttAway = ffrequency - ttRemainder;
+      var nnextTrain = moment().add(ttAway, "minutes").format("hh:mm a");
+      console.log("Minutes Away: " + ttAway);
+      console.log("Next Train: " + nnextTrain);
+      var ta = "#a"+counter1;
+      var tl = "#b"+counter1;
+      $(ta).html(ttAway);
+      $(tl).html(nnextTrain);
+      counter1++;
+      
    
    }, function(errorObject) {
    
       console.log("Errors handled: " + errorObject.code);
    
    });
+   for( var i = 0; i<counter; i++){
+      var a
+   }
