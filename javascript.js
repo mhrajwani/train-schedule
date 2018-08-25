@@ -67,15 +67,20 @@ firebase.initializeApp(config);
       tableMinsAway.addClass("aClass");
       var button1 = $("<button>").html("Remove");
       var button2 = $("<button>").html("Refresh");
-      button2.attr("id", "c"+counter);
+      $(button1).attr("id", snapshot.key);
       counter++
       newRow.html(tableName).append(tableDestination).append(tableFrequency).append(tableNextTrain).append(tableMinsAway).append(button2).append(button1);
    
       $("#trainTable").append(newRow);
+
+      console.log(snapshot.key);
       
       $(button1).on("click", function(event) {
         $(this).closest ('tr').remove ();
+        var key = this.id;
+        console.log(key);
         //$(this).parents('tr').first().remove();
+        database.ref().child(key).remove();
       });
 
       $(button2).on("click", function(event) {
@@ -108,6 +113,4 @@ firebase.initializeApp(config);
       console.log("Errors handled: " + errorObject.code);
    
    });
-   for( var i = 0; i<counter; i++){
-      var a
-   }
+   
